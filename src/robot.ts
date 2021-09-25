@@ -1,4 +1,3 @@
-import { AlreadyPlacedError, NotPlacedError } from "./errors";
 import {
   commands,
   coordinate,
@@ -69,10 +68,6 @@ class Robot {
   }
 
   place(x: coordinate, y: coordinate, direction: direction) {
-    // If already placed - throw error
-    if (this.commands.length) {
-      throw new AlreadyPlacedError();
-    }
     this.position = [x, y, direction];
     // Update table
     this.table.positions[y][x] = this;
@@ -83,10 +78,6 @@ class Robot {
   }
 
   move() {
-    // Throw error if attempt command without placement
-    if (!this.commands.length) {
-      throw new NotPlacedError();
-    }
     if (!this.position) return; // Type narrowing due to null initialization
     let [x, y, direction] = this.position;
     const [validated, coords] = this._validateMove(direction, [x, y]);
@@ -108,10 +99,6 @@ class Robot {
   }
 
   left() {
-    // Throw error if attempt command without placement
-    if (!this.commands.length) {
-      throw new NotPlacedError();
-    }
     if (!this.position) return; // Type narrowing due to null initialization
     const currentDirection = this.position[2];
     this.position[2] = this._rotateLeft[currentDirection] as direction;
@@ -121,10 +108,6 @@ class Robot {
   }
 
   right() {
-    // Throw error if attempt command without placement
-    if (!this.commands.length) {
-      throw new NotPlacedError();
-    }
     if (!this.position) return; // Type narrowing due to null initialization
     const currentDirection = this.position[2];
     this.position[2] = this._rotateRight[currentDirection] as direction;
@@ -134,10 +117,6 @@ class Robot {
   }
 
   report() {
-    // Throw error if attempt command without placement
-    if (!this.commands.length) {
-      throw new NotPlacedError();
-    }
     if (!this.position) return; // Type narrowing due to null initialization
     const [x, y, direction] = this.position;
     console.log(`Located at: ${x}, ${y}, ${direction.toUpperCase()}`);
