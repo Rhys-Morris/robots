@@ -25,7 +25,7 @@ console.log(
 );
 askForInput();
 
-function askForInput() {
+export function askForInput() {
   rl.question("Awaiting command: ", function getInput(response: string): void {
     if (response.toLowerCase() === "quit") {
       rl.close();
@@ -38,7 +38,7 @@ function askForInput() {
 
 // ----- LOGIC FLOW -----
 
-function mapInput(input: string) {
+export function mapInput(input: string) {
   const [action, args] = input.split(" ");
   switch (action.toLowerCase()) {
     case "place":
@@ -96,7 +96,7 @@ function mapInput(input: string) {
 }
 
 // Validate placement of new robot is allowed
-function validatePlaceArguments(
+export function validatePlaceArguments(
   x: string | number,
   y: string | number,
   direction: string
@@ -116,14 +116,14 @@ function validatePlaceArguments(
   return [true, "", { x, y, direction }];
 }
 
-function placeRobot(x: coordinate, y: coordinate, direction: direction) {
+export function placeRobot(x: coordinate, y: coordinate, direction: direction) {
   const robot = new Robot(gameTable);
   robots.push(robot);
   robot.place(x, y, direction);
   if (!currentRobot) currentRobot = robot;
 }
 
-function reportOnRobots(): void {
+export function reportOnRobots(): void {
   if (!currentRobot) {
     console.log("No robots on table");
     return;

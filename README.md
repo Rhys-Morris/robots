@@ -1,11 +1,7 @@
 TO DO
 
-Check errors if method calling when no robot
-Use the update board method on the table
 Clean up code and typing
-Write unit tests
-Write readme
-Screenshot solutions
+Write unit tests for index
 
 # Robots
 
@@ -21,13 +17,13 @@ This program was created for a coding challenge outlined below.
 
 ## Dependencies
 
-`Node.js` - version BLAH was used for development
+`Node.js`: version `v14.16.0` used for development
 
 ## Usage
 
 Clone repository to your local machine.
 
-Navigate to the directory via the command line.
+Navigate to the root directory via the command line.
 
 To execute the program:
 
@@ -87,3 +83,41 @@ Valid commands to the program are as follows:
     - Exit the program
 
 If an invalid command is given, the user will be alerted and reprompted for input.
+
+## Manual Test Output
+
+1. 
+```
+PLACE 0,0,NORTH
+MOVE
+REPORT
+
+Output: 0,1,NORTH
+```
+
+![answer-1](./docs/1.png)
+
+2. 
+```
+PLACE 0,0,NORTH
+LEFT
+REPORT
+
+Output: 0,0,WEST
+```
+
+![answer-2](./docs/2.png)
+
+3.
+```
+PLACE 1,2,EAST
+MOVE
+MOVE
+LEFT
+MOVE
+REPORT
+
+Output: 3,3,NORTH
+```
+
+![answer-3](./docs/3.png)
