@@ -100,7 +100,11 @@ export function validatePlaceArguments(
   direction: string
 ): [boolean, string, { x: number; y: number; direction: string }?] {
   // Direction validation
-  direction = direction.toLowerCase();
+  try {
+    direction = direction.toLowerCase();
+  } catch (e) {
+    direction = "invalid";
+  }
   const validDirections = ["east", "west", "north", "south"];
   if (!validDirections.includes(direction))
     return [false, "Direction is invalid"];

@@ -9,8 +9,6 @@ var table_1 = __importDefault(require("./table"));
 var readline_sync_1 = __importDefault(require("readline-sync"));
 // ----- INITIALISE PROGRAM -----
 var gameTable = new table_1.default();
-var currentRobot = null;
-var robots = [];
 if (process.env.NODE_ENV !== "test") {
     console.log("Welcome to the Robot game! To learn how to play with your robots, please consult the README documentation in the source directory.");
     askForInput();
@@ -19,20 +17,26 @@ if (process.env.NODE_ENV !== "test") {
 function askForInput() {
     var response = readline_sync_1.default.question("Awaiting input: ");
     if (response.toLowerCase() === "quit") {
+        console.log("Thanks for playing!");
         return;
     }
-    mapInput(response, currentRobot, reportOnRobots, validatePlaceArguments);
+    mapInput(response, gameTable.currentRobot, reportOnRobots, validatePlaceArguments);
     askForInput();
 }
 function mapInput(input, robotToAction, reportFunc, validatePlacement) {
     var _a = input.toLowerCase().split(" "), action = _a[0], args = _a[1];
     // Account for no current robot
-    if (!robotToAction && action !== "place") {
+    if (!robotToAction && !["place", "board"].includes(action)) {
         console.log("Must place robot before issuing further commands");
         return;
     }
     switch (action) {
         case "place":
+            // Account for no arguments passed subsequent to PLACE
+            if (!args) {
+                console.log("Must provide co-ordinates and direction to place robot");
+                return;
+            }
             var _b = args.split(","), x = _b[0], y = _b[1], direction = _b[2];
             var _c = validatePlacement(x, y, direction), validatedPlacement = _c[0], error = _c[1], data = _c[2];
             if (validatedPlacement) {
@@ -54,18 +58,23 @@ function mapInput(input, robotToAction, reportFunc, validatePlacement) {
             robotToAction === null || robotToAction === void 0 ? void 0 : robotToAction.right();
             break;
         case "report":
-            reportFunc(robotToAction, robots);
+            reportFunc(robotToAction, gameTable.robots);
+            break;
+        case "board":
+            gameTable.printTable();
             break;
         case "robot":
             var robotToSelect = Number(args);
-            if (Number.isNaN(args) ||
+            // Error reporting here could be improved to be more informative for each
+            if (!args ||
+                Number.isNaN(args) ||
                 robotToSelect < 1 ||
-                robotToSelect > robots.length ||
-                !robots.length) {
+                robotToSelect > gameTable.robots.length ||
+                !gameTable.robots.length) {
                 console.log("Robot selection is invalid");
                 return;
             }
-            currentRobot = robots[robotToSelect - 1]; // Convert from one-indexed to zero-indexed
+            gameTable.currentRobot = gameTable.robots[robotToSelect - 1]; // Convert from one-indexed to zero-indexed
             break;
         default:
             console.log("Invalid command given, please consult documentation for valid commands");
@@ -76,7 +85,12 @@ exports.mapInput = mapInput;
 // Validate placement of new robot is allowed
 function validatePlaceArguments(x, y, direction) {
     // Direction validation
-    direction = direction.toLowerCase();
+    try {
+        direction = direction.toLowerCase();
+    }
+    catch (e) {
+        direction = "invalid";
+    }
     var validDirections = ["east", "west", "north", "south"];
     if (!validDirections.includes(direction))
         return [false, "Direction is invalid"];
@@ -97,10 +111,10 @@ function validatePlaceArguments(x, y, direction) {
 exports.validatePlaceArguments = validatePlaceArguments;
 function placeRobot(x, y, direction, gameTable) {
     var robot = new robot_1.default(gameTable);
-    robots.push(robot);
+    gameTable.robots.push(robot);
     robot.place(x, y, direction);
-    if (!currentRobot)
-        currentRobot = robot;
+    if (!gameTable.currentRobot)
+        gameTable.currentRobot = robot;
 }
 exports.placeRobot = placeRobot;
 function reportOnRobots(currentRobot, robots) {
