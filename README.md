@@ -1,8 +1,3 @@
-TO DO
-
-Clean up code and typing
-Write unit tests for index
-
 # Robots
 
 ## Description
@@ -15,17 +10,26 @@ This program was created for a coding challenge outlined below.
 
 > The robot is free to roam around the surface of the table, but must be prevented from falling to destruction. Any movement that would result in the robot falling from the table must be prevented, however further valid movement commands must still be allowed.
 
-## Dependencies
+I wrote this program in TypeScript as I wanted to reinforce recent learnings, and used it as an opportunity to practice with the Jest testing framework. 
 
-`Node.js`: version `v14.16.0` used for development
+## Installation
 
-## Usage
+`Node.js` is required to run this program. For posterity, version `v14.16.0` was used for development
+
+Install yarn:
+
+```
+yarn --version  // If present no need to re-install
+npm install --global yarn
+```
 
 Clone repository to your local machine.
 
 Navigate to the root directory via the command line.
 
-To execute the program:
+Install dependencies: `yarn install`
+
+To execute the program from directory root:
 
 `node ./build/index.js`
 
@@ -37,6 +41,7 @@ Valid commands to the program are as follows:
 
 - PLACE x,y,direction
     - A new robot is placed on the board at position x, position y facing in the direction given as the 3rd argument.
+    - Program expects arguments to be comma separated without whitespace
     - If placement is invalid the user will be alerted to this.
     - The co-ordinates (0,0) refer to the South-West corner of the table.
     - Valid x and y arguments are between 0 & 4.

@@ -27,6 +27,12 @@ interface Table {
 type tableCell = null | Robot;
 type tableRow = [tableCell, tableCell, tableCell, tableCell, tableCell]; // Explicitly 5 cells per row
 
+type validatePlacement = (
+  x: string | number,
+  y: string | number,
+  direction: string
+) => [boolean, string, { x: number; y: number; direction: string }?];
+
 export {
   coordinate,
   coordinateTuple,
@@ -35,4 +41,5 @@ export {
   Robot,
   Table,
   tableRow,
+  validatePlacement,
 };

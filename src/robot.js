@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 // ----- ROBOT CLASS -----
 var Robot = /** @class */ (function () {
     function Robot(table) {
@@ -7,19 +7,19 @@ var Robot = /** @class */ (function () {
             east: "south",
             south: "west",
             west: "north",
-            north: "east",
+            north: "east"
         };
         this._rotateLeft = {
             east: "north",
             south: "east",
             west: "south",
-            north: "west",
+            north: "west"
         };
         this._moveIncrement = {
             east: 1,
             south: -1,
             west: -1,
-            north: 1,
+            north: 1
         };
         this.commands = [];
         this.position = null;
@@ -34,7 +34,7 @@ var Robot = /** @class */ (function () {
             east: 4,
             north: 4,
             south: 0,
-            west: 0,
+            west: 0
         };
         if (willFallFromTable[direction] === movingAxisPosition) {
             return [false];
@@ -53,7 +53,7 @@ var Robot = /** @class */ (function () {
         this.table.positions[y][x] = this;
         this.commands.push({
             type: "PLACE",
-            input: [x, y, direction],
+            input: [x, y, direction]
         });
     };
     Robot.prototype.move = function () {
@@ -72,7 +72,7 @@ var Robot = /** @class */ (function () {
         // Update table
         this.table.updateTable([x, y], [newX, newY], this);
         this.commands.push({
-            type: "MOVE",
+            type: "MOVE"
         });
     };
     Robot.prototype.left = function () {
@@ -81,7 +81,7 @@ var Robot = /** @class */ (function () {
         var currentDirection = this.position[2];
         this.position[2] = this._rotateLeft[currentDirection];
         this.commands.push({
-            type: "LEFT",
+            type: "LEFT"
         });
     };
     Robot.prototype.right = function () {
@@ -90,7 +90,7 @@ var Robot = /** @class */ (function () {
         var currentDirection = this.position[2];
         this.position[2] = this._rotateRight[currentDirection];
         this.commands.push({
-            type: "RIGHT",
+            type: "RIGHT"
         });
     };
     Robot.prototype.report = function () {
@@ -99,9 +99,9 @@ var Robot = /** @class */ (function () {
         var _a = this.position, x = _a[0], y = _a[1], direction = _a[2];
         console.log("Located at: " + x + ", " + y + ", " + direction.toUpperCase());
         this.commands.push({
-            type: "REPORT",
+            type: "REPORT"
         });
     };
     return Robot;
 }());
-exports.default = Robot;
+exports["default"] = Robot;

@@ -1,14 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 exports.reportOnRobots = exports.placeRobot = exports.validatePlaceArguments = exports.mapInput = void 0;
-var robot_1 = __importDefault(require("./robot"));
-var table_1 = __importDefault(require("./table"));
-var readline_sync_1 = __importDefault(require("readline-sync"));
+var robot_1 = require("./robot");
+var table_1 = require("./table");
+var readline_sync_1 = require("readline-sync");
 // ----- INITIALISE PROGRAM -----
-var gameTable = new table_1.default();
+var gameTable = new table_1["default"]();
 var currentRobot = null;
 var robots = [];
 if (process.env.NODE_ENV !== "test") {
@@ -17,7 +14,7 @@ if (process.env.NODE_ENV !== "test") {
 }
 // ----- LOGIC FLOW -----
 function askForInput() {
-    var response = readline_sync_1.default.question("Awaiting input: ");
+    var response = readline_sync_1["default"].question("Awaiting input: ");
     if (response.toLowerCase() === "quit") {
         return;
     }
@@ -93,7 +90,7 @@ function validatePlaceArguments(x, y, direction) {
 }
 exports.validatePlaceArguments = validatePlaceArguments;
 function placeRobot(x, y, direction, gameTable) {
-    var robot = new robot_1.default(gameTable);
+    var robot = new robot_1["default"](gameTable);
     robots.push(robot);
     robot.place(x, y, direction);
     if (!currentRobot)

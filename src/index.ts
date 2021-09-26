@@ -1,17 +1,7 @@
 import Robot from "./robot";
 import Table from "./table";
-import { coordinate, direction } from "./types";
-
-// Set up user input
-const readline = require("readline");
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-rl.on("close", function () {
-  console.log("\nThanks for playing!");
-  process.exit(0);
-});
+import { coordinate, direction, validatePlacement } from "./types";
+import readlineSync from "readline-sync";
 
 // ----- INITIALISE PROGRAM -----
 
@@ -19,63 +9,68 @@ const gameTable = new Table();
 let currentRobot: Robot | null = null;
 let robots: Robot[] = [];
 
-// Game rules
-console.log(
-  "Welcome to the Robot game! To learn how to play with your robots, please consult the README documentation in the source directory."
-);
-askForInput();
-
-export function askForInput() {
-  rl.question("Awaiting command: ", function getInput(response: string): void {
-    if (response.toLowerCase() === "quit") {
-      rl.close();
-      return;
-    }
-    mapInput(response);
-    askForInput();
-  });
+if (process.env.NODE_ENV !== "test") {
+  console.log(
+    "Welcome to the Robot game! To learn how to play with your robots, please consult the README documentation in the source directory."
+  );
+  askForInput();
 }
 
 // ----- LOGIC FLOW -----
 
-export function mapInput(input: string) {
-  const [action, args] = input.split(" ");
-  switch (action.toLowerCase()) {
-    case "place":
-      try {
-        const [x, y, direction] = args.split(",");
-        const [validatedPlacement, error, data] = validatePlaceArguments(
-          x,
-          y,
-          direction
-        );
+function askForInput() {
+  const response = readlineSync.question("Awaiting input: ");
+  if (response.toLowerCase() === "quit") {
+    return;
+  }
+  mapInput(response, currentRobot, reportOnRobots, validatePlaceArguments);
+  askForInput();
+}
 
-        if (validatedPlacement) {
-          if (!data) throw new Error("No data returned");
-          placeRobot(
-            data.x as coordinate,
-            data.y as coordinate,
-            data.direction as direction
-          );
-        } else {
-          console.log(`Invalid robot placement: ${error}`);
-        }
-        break;
-      } catch (e) {
-        console.log("Invalid arguments to place robot on table");
-        break;
+export function mapInput(
+  input: string,
+  robotToAction: Robot | null,
+  reportFunc: (currentRobot: Robot | null, robots: Robot[]) => void,
+  validatePlacement: validatePlacement
+) {
+  const [action, args] = input.toLowerCase().split(" ");
+  // Account for no current robot
+  if (!robotToAction && action !== "place") {
+    console.log("Must place robot before issuing further commands");
+    return;
+  }
+  switch (action) {
+    case "place":
+      const [x, y, direction] = args.split(",");
+      const [validatedPlacement, error, data] = validatePlacement(
+        x,
+        y,
+        direction
+      );
+
+      if (validatedPlacement) {
+        if (!data) throw new Error("No data returned");
+        placeRobot(
+          data.x as coordinate,
+          data.y as coordinate,
+          data.direction as direction,
+          gameTable
+        );
+      } else {
+        console.log(`Invalid robot placement: ${error}`);
       }
+      break;
     case "move":
-      currentRobot?.move();
+      robotToAction?.move();
       break;
     case "left":
-      currentRobot?.left();
+      robotToAction?.left();
       break;
     case "right":
-      currentRobot?.right();
+      robotToAction?.right();
       break;
     case "report":
-      reportOnRobots();
+      reportFunc(robotToAction, robots);
       break;
     case "robot":
       const robotToSelect = Number(args);
@@ -91,6 +86,9 @@ export function mapInput(input: string) {
       currentRobot = robots[robotToSelect - 1]; // Convert from one-indexed to zero-indexed
       break;
     default:
+      console.log(
+        "Invalid command given, please consult documentation for valid commands"
+      );
       return;
   }
 }
@@ -116,14 +114,22 @@ export function validatePlaceArguments(
   return [true, "", { x, y, direction }];
 }
 
-export function placeRobot(x: coordinate, y: coordinate, direction: direction) {
+export function placeRobot(
+  x: coordinate,
+  y: coordinate,
+  direction: direction,
+  gameTable: Table
+) {
   const robot = new Robot(gameTable);
   robots.push(robot);
   robot.place(x, y, direction);
   if (!currentRobot) currentRobot = robot;
 }
 
-export function reportOnRobots(): void {
+export function reportOnRobots(
+  currentRobot: Robot | null,
+  robots: Robot[]
+): void {
   if (!currentRobot) {
     console.log("No robots on table");
     return;
