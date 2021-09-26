@@ -182,11 +182,7 @@
 <a name='L123'></a><a href='#L123'>123</a>
 <a name='L124'></a><a href='#L124'>124</a>
 <a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a>
-<a name='L127'></a><a href='#L127'>127</a>
-<a name='L128'></a><a href='#L128'>128</a>
-<a name='L129'></a><a href='#L129'>129</a>
-<a name='L130'></a><a href='#L130'>130</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L126'></a><a href='#L126'>126</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,22 +205,21 @@
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -257,7 +252,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -269,7 +263,6 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -277,7 +270,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -338,28 +330,27 @@ class Robot {
     this.table = table;
   }
 &nbsp;
-  _rotateRight = {
+  static _rotateRight = {
     east: "south",
     south: "west",
     west: "north",
     north: "east",
   };
 &nbsp;
-  _rotateLeft = {
+  static _rotateLeft = {
     east: "north",
     south: "east",
     west: "south",
     north: "west",
   };
 &nbsp;
-  _moveIncrement = {
+  static _moveIncrement = {
     east: 1,
     south: -1,
     west: -1,
     north: 1,
   };
 &nbsp;
-  // VALIDATIONS
   _validateMove(
     direction: direction,
     currentCoords: coordinateTuple
@@ -378,16 +369,15 @@ class Robot {
     }
     // Check if will run into another robot
     movingOnAxis === "y"
-      ? (y += this._moveIncrement[direction])
-      : (<span class="branch-1 cbranch-no" title="branch not covered" >x += this._moveIncrement[direction])</span>;
-    if (this.table.positions[y][x]) return [false]; // Not null - robot present
+      ? (y += Robot._moveIncrement[direction])
+      : (<span class="branch-1 cbranch-no" title="branch not covered" >x += Robot._moveIncrement[direction])</span>;
+    if (this.table.positions[y][x]) return [false]; // Not null - robot present in this position
     return [true, [x, y]];
   }
 &nbsp;
   place(x: coordinate, y: coordinate, direction: direction) {
     this.position = [x, y, direction];
-    // Update table
-    this.table.positions[y][x] = this;
+    this.table.positions[y][x] = this; // Update table
     this.commands.push({
       type: "PLACE",
       input: [x, y, direction],
@@ -398,17 +388,15 @@ class Robot {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.position) <span class="cstat-no" title="statement not covered" >return; </span>// Type narrowing due to null initialization
     let [x, y, direction] = this.position;
     const [validated, coords] = this._validateMove(direction, [x, y]);
-    // Narrow type in case non-validated
     if (!validated) {
       console.log("Robot is unable to move in the indicated direction");
       return;
     }
-    // Implement move
-    const [newX, newY] = coords as coordinateTuple;
+&nbsp;
+    const [newX, newY] = coords as coordinateTuple; // Implement move
     this.position = [newX, newY, direction];
 &nbsp;
-    // Update table
-    this.table.updateTable([x, y], [newX, newY], this);
+    this.table.updateTable([x, y], [newX, newY], this); // Update table
 &nbsp;
     this.commands.push({
       type: "MOVE",
@@ -418,7 +406,7 @@ class Robot {
   left() {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.position) <span class="cstat-no" title="statement not covered" >return; </span>// Type narrowing due to null initialization
     const currentDirection = this.position[2];
-    this.position[2] = this._rotateLeft[currentDirection] as direction;
+    this.position[2] = Robot._rotateLeft[currentDirection] as direction;
     this.commands.push({
       type: "LEFT",
     });
@@ -427,7 +415,7 @@ class Robot {
   right() {
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.position) <span class="cstat-no" title="statement not covered" >return; </span>// Type narrowing due to null initialization
     const currentDirection = this.position[2];
-    this.position[2] = this._rotateRight[currentDirection] as direction;
+    this.position[2] = Robot._rotateRight[currentDirection] as direction;
     this.commands.push({
       type: "RIGHT",
     });
@@ -451,7 +439,7 @@ export default Robot;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sun Sep 26 2021 11:54:06 GMT+1000 (Australian Eastern Standard Time)
+                at Sun Sep 26 2021 13:59:32 GMT+1000 (Australian Eastern Standard Time)
             </div>
         </div>
         <script src="prettify.js"></script>

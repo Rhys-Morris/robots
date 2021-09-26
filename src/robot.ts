@@ -21,21 +21,21 @@ class Robot {
     this.table = table;
   }
 
-  _rotateRight = {
+  static _rotateRight = {
     east: "south",
     south: "west",
     west: "north",
     north: "east",
   };
 
-  _rotateLeft = {
+  static _rotateLeft = {
     east: "north",
     south: "east",
     west: "south",
     north: "west",
   };
 
-  _moveIncrement = {
+  static _moveIncrement = {
     east: 1,
     south: -1,
     west: -1,
@@ -60,8 +60,8 @@ class Robot {
     }
     // Check if will run into another robot
     movingOnAxis === "y"
-      ? (y += this._moveIncrement[direction])
-      : (x += this._moveIncrement[direction]);
+      ? (y += Robot._moveIncrement[direction])
+      : (x += Robot._moveIncrement[direction]);
     if (this.table.positions[y][x]) return [false]; // Not null - robot present in this position
     return [true, [x, y]];
   }
@@ -97,7 +97,7 @@ class Robot {
   left() {
     if (!this.position) return; // Type narrowing due to null initialization
     const currentDirection = this.position[2];
-    this.position[2] = this._rotateLeft[currentDirection] as direction;
+    this.position[2] = Robot._rotateLeft[currentDirection] as direction;
     this.commands.push({
       type: "LEFT",
     });
@@ -106,7 +106,7 @@ class Robot {
   right() {
     if (!this.position) return; // Type narrowing due to null initialization
     const currentDirection = this.position[2];
-    this.position[2] = this._rotateRight[currentDirection] as direction;
+    this.position[2] = Robot._rotateRight[currentDirection] as direction;
     this.commands.push({
       type: "RIGHT",
     });

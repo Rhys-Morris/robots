@@ -3,29 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // ----- ROBOT CLASS -----
 var Robot = /** @class */ (function () {
     function Robot(table) {
-        this._rotateRight = {
-            east: "south",
-            south: "west",
-            west: "north",
-            north: "east",
-        };
-        this._rotateLeft = {
-            east: "north",
-            south: "east",
-            west: "south",
-            north: "west",
-        };
-        this._moveIncrement = {
-            east: 1,
-            south: -1,
-            west: -1,
-            north: 1,
-        };
         this.commands = [];
         this.position = null;
         this.table = table;
     }
-    // VALIDATIONS
     Robot.prototype._validateMove = function (direction, currentCoords) {
         var x = currentCoords[0], y = currentCoords[1];
         var movingAxisPosition = ["south", "north"].includes(direction) ? y : x;
@@ -41,16 +22,15 @@ var Robot = /** @class */ (function () {
         }
         // Check if will run into another robot
         movingOnAxis === "y"
-            ? (y += this._moveIncrement[direction])
-            : (x += this._moveIncrement[direction]);
+            ? (y += Robot._moveIncrement[direction])
+            : (x += Robot._moveIncrement[direction]);
         if (this.table.positions[y][x])
-            return [false]; // Not null - robot present
+            return [false]; // Not null - robot present in this position
         return [true, [x, y]];
     };
     Robot.prototype.place = function (x, y, direction) {
         this.position = [x, y, direction];
-        // Update table
-        this.table.positions[y][x] = this;
+        this.table.positions[y][x] = this; // Update table
         this.commands.push({
             type: "PLACE",
             input: [x, y, direction],
@@ -61,16 +41,13 @@ var Robot = /** @class */ (function () {
             return; // Type narrowing due to null initialization
         var _a = this.position, x = _a[0], y = _a[1], direction = _a[2];
         var _b = this._validateMove(direction, [x, y]), validated = _b[0], coords = _b[1];
-        // Narrow type in case non-validated
         if (!validated) {
             console.log("Robot is unable to move in the indicated direction");
             return;
         }
-        // Implement move
-        var _c = coords, newX = _c[0], newY = _c[1];
+        var _c = coords, newX = _c[0], newY = _c[1]; // Implement move
         this.position = [newX, newY, direction];
-        // Update table
-        this.table.updateTable([x, y], [newX, newY], this);
+        this.table.updateTable([x, y], [newX, newY], this); // Update table
         this.commands.push({
             type: "MOVE",
         });
@@ -79,7 +56,7 @@ var Robot = /** @class */ (function () {
         if (!this.position)
             return; // Type narrowing due to null initialization
         var currentDirection = this.position[2];
-        this.position[2] = this._rotateLeft[currentDirection];
+        this.position[2] = Robot._rotateLeft[currentDirection];
         this.commands.push({
             type: "LEFT",
         });
@@ -88,7 +65,7 @@ var Robot = /** @class */ (function () {
         if (!this.position)
             return; // Type narrowing due to null initialization
         var currentDirection = this.position[2];
-        this.position[2] = this._rotateRight[currentDirection];
+        this.position[2] = Robot._rotateRight[currentDirection];
         this.commands.push({
             type: "RIGHT",
         });
@@ -101,6 +78,24 @@ var Robot = /** @class */ (function () {
         this.commands.push({
             type: "REPORT",
         });
+    };
+    Robot._rotateRight = {
+        east: "south",
+        south: "west",
+        west: "north",
+        north: "east",
+    };
+    Robot._rotateLeft = {
+        east: "north",
+        south: "east",
+        west: "south",
+        north: "west",
+    };
+    Robot._moveIncrement = {
+        east: 1,
+        south: -1,
+        west: -1,
+        north: 1,
     };
     return Robot;
 }());

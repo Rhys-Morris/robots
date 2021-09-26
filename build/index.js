@@ -37,7 +37,7 @@ function mapInput(input, robotToAction, reportFunc, validatePlacement) {
             var _c = validatePlacement(x, y, direction), validatedPlacement = _c[0], error = _c[1], data = _c[2];
             if (validatedPlacement) {
                 if (!data)
-                    throw new Error("No data returned");
+                    throw new Error("No data returned"); // Type narrow data as we don't return it for failed validations
                 placeRobot(data.x, data.y, data.direction, gameTable);
             }
             else {
@@ -75,10 +75,12 @@ function mapInput(input, robotToAction, reportFunc, validatePlacement) {
 exports.mapInput = mapInput;
 // Validate placement of new robot is allowed
 function validatePlaceArguments(x, y, direction) {
+    // Direction validation
     direction = direction.toLowerCase();
     var validDirections = ["east", "west", "north", "south"];
     if (!validDirections.includes(direction))
         return [false, "Direction is invalid"];
+    // Co-ordinate validation
     x = Number(x);
     y = Number(y);
     if (Number.isNaN(x) || Number.isNaN(y))
@@ -87,6 +89,7 @@ function validatePlaceArguments(x, y, direction) {
         return [false, "x/y coordinates are invalid"];
     if (y < 0 || y > 4)
         return [false, "x/y coordinates are invalid"];
+    // Check position on table not occupied by robot already
     if (gameTable.positions[y][x])
         return [false, "Robot already at location selected"];
     return [true, "", { x: x, y: y, direction: direction }];
