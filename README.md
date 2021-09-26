@@ -10,7 +10,7 @@ This program was created for a coding challenge outlined below.
 
 > The robot is free to roam around the surface of the table, but must be prevented from falling to destruction. Any movement that would result in the robot falling from the table must be prevented, however further valid movement commands must still be allowed.
 
-I wrote this program in TypeScript as I wanted to reinforce recent learnings, and used it as an opportunity to practice with the Jest testing framework. 
+I wrote this program in TypeScript to apply recent learnings, and also used it as an opportunity to practice with the Jest testing framework. 
 
 ## Installation
 
