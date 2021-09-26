@@ -49,7 +49,7 @@ export function mapInput(
       );
 
       if (validatedPlacement) {
-        if (!data) throw new Error("No data returned");
+        if (!data) throw new Error("No data returned"); // Type narrow data as we don't return it for failed validations
         placeRobot(
           data.x as coordinate,
           data.y as coordinate,
@@ -99,18 +99,24 @@ export function validatePlaceArguments(
   y: string | number,
   direction: string
 ): [boolean, string, { x: number; y: number; direction: string }?] {
+  // Direction validation
   direction = direction.toLowerCase();
   const validDirections = ["east", "west", "north", "south"];
   if (!validDirections.includes(direction))
     return [false, "Direction is invalid"];
+
+  // Co-ordinate validation
   x = Number(x);
   y = Number(y);
   if (Number.isNaN(x) || Number.isNaN(y))
     return [false, "x/y coordinates are invalid"];
   if (x < 0 || x > 4) return [false, "x/y coordinates are invalid"];
   if (y < 0 || y > 4) return [false, "x/y coordinates are invalid"];
+
+  // Check position on table not occupied by robot already
   if (gameTable.positions[y][x])
     return [false, "Robot already at location selected"];
+
   return [true, "", { x, y, direction }];
 }
 

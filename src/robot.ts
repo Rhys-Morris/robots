@@ -42,7 +42,6 @@ class Robot {
     north: 1,
   };
 
-  // VALIDATIONS
   _validateMove(
     direction: direction,
     currentCoords: coordinateTuple
@@ -63,14 +62,13 @@ class Robot {
     movingOnAxis === "y"
       ? (y += this._moveIncrement[direction])
       : (x += this._moveIncrement[direction]);
-    if (this.table.positions[y][x]) return [false]; // Not null - robot present
+    if (this.table.positions[y][x]) return [false]; // Not null - robot present in this position
     return [true, [x, y]];
   }
 
   place(x: coordinate, y: coordinate, direction: direction) {
     this.position = [x, y, direction];
-    // Update table
-    this.table.positions[y][x] = this;
+    this.table.positions[y][x] = this; // Update table
     this.commands.push({
       type: "PLACE",
       input: [x, y, direction],
@@ -81,17 +79,15 @@ class Robot {
     if (!this.position) return; // Type narrowing due to null initialization
     let [x, y, direction] = this.position;
     const [validated, coords] = this._validateMove(direction, [x, y]);
-    // Narrow type in case non-validated
     if (!validated) {
       console.log("Robot is unable to move in the indicated direction");
       return;
     }
-    // Implement move
-    const [newX, newY] = coords as coordinateTuple;
+
+    const [newX, newY] = coords as coordinateTuple; // Implement move
     this.position = [newX, newY, direction];
 
-    // Update table
-    this.table.updateTable([x, y], [newX, newY], this);
+    this.table.updateTable([x, y], [newX, newY], this); // Update table
 
     this.commands.push({
       type: "MOVE",
