@@ -76,7 +76,12 @@ exports.mapInput = mapInput;
 // Validate placement of new robot is allowed
 function validatePlaceArguments(x, y, direction) {
     // Direction validation
-    direction = direction.toLowerCase();
+    try {
+        direction = direction.toLowerCase();
+    }
+    catch (e) {
+        direction = "invalid";
+    }
     var validDirections = ["east", "west", "north", "south"];
     if (!validDirections.includes(direction))
         return [false, "Direction is invalid"];
