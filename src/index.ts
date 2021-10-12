@@ -6,8 +6,6 @@ import readlineSync from "readline-sync";
 // ----- INITIALISE PROGRAM -----
 
 const gameTable = new Table();
-let currentRobot: Robot | null = null;
-let robots: Robot[] = [];
 
 if (process.env.NODE_ENV !== "test") {
   console.log(
@@ -21,9 +19,15 @@ if (process.env.NODE_ENV !== "test") {
 function askForInput() {
   const response = readlineSync.question("Awaiting input: ");
   if (response.toLowerCase() === "quit") {
+    console.log("Thanks for playing!");
     return;
   }
-  mapInput(response, currentRobot, reportOnRobots, validatePlaceArguments);
+  mapInput(
+    response,
+    gameTable.currentRobot,
+    reportOnRobots,
+    validatePlaceArguments
+  );
   askForInput();
 }
 
@@ -35,12 +39,17 @@ export function mapInput(
 ) {
   const [action, args] = input.toLowerCase().split(" ");
   // Account for no current robot
-  if (!robotToAction && action !== "place") {
+  if (!robotToAction && !["place", "board"].includes(action)) {
     console.log("Must place robot before issuing further commands");
     return;
   }
   switch (action) {
     case "place":
+      // Account for no arguments passed subsequent to PLACE
+      if (!args) {
+        console.log("Must provide co-ordinates and direction to place robot");
+        return;
+      }
       const [x, y, direction] = args.split(",");
       const [validatedPlacement, error, data] = validatePlacement(
         x,
@@ -70,20 +79,25 @@ export function mapInput(
       robotToAction?.right();
       break;
     case "report":
-      reportFunc(robotToAction, robots);
+      reportFunc(robotToAction, gameTable.robots);
+      break;
+    case "board":
+      gameTable.printTable();
       break;
     case "robot":
       const robotToSelect = Number(args);
+      // Error reporting here could be improved to be more informative for each
       if (
+        !args ||
         Number.isNaN(args) ||
         robotToSelect < 1 ||
-        robotToSelect > robots.length ||
-        !robots.length
+        robotToSelect > gameTable.robots.length ||
+        !gameTable.robots.length
       ) {
         console.log("Robot selection is invalid");
         return;
       }
-      currentRobot = robots[robotToSelect - 1]; // Convert from one-indexed to zero-indexed
+      gameTable.currentRobot = gameTable.robots[robotToSelect - 1]; // Convert from one-indexed to zero-indexed
       break;
     default:
       console.log(
@@ -131,9 +145,9 @@ export function placeRobot(
   gameTable: Table
 ) {
   const robot = new Robot(gameTable);
-  robots.push(robot);
+  gameTable.robots.push(robot);
   robot.place(x, y, direction);
-  if (!currentRobot) currentRobot = robot;
+  if (!gameTable.currentRobot) gameTable.currentRobot = robot;
 }
 
 export function reportOnRobots(

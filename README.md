@@ -84,6 +84,10 @@ Valid commands to the program are as follows:
     - Robot numbers are defined sequentially in the order they were placed i.e. the first robot placed is Robot 1, the second robot placed is Robot 2 etc.
     - Invalid input to number will maintain the current robot
     - Robots cannot be placed on top of other robots
+
+- BOARD
+    - Print a graphical representation of the board. Robot's current placements are represented by the letter `R`.
+
 - QUIT
     - Exit the program
 

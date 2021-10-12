@@ -1,20 +1,12 @@
-import {
-  commands,
-  coordinate,
-  coordinateTuple,
-  direction,
-  Table,
-} from "./types";
-
-interface Robot {
-  commands: commands[];
-  position: null | [coordinate, coordinate, direction];
-  table: Table;
-}
+import { commands, coordinate, coordinateTuple, direction } from "./types";
+import Table from "./table";
 
 // ----- ROBOT CLASS -----
 
 class Robot {
+  commands: commands[];
+  position: null | [coordinate, coordinate, direction];
+  table: Table;
   constructor(table: Table) {
     this.commands = [];
     this.position = null;
